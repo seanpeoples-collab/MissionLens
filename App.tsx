@@ -62,14 +62,14 @@ const App = () => {
                   <>
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 text-indigo-700 text-sm font-semibold mb-6 animate-fade-in">
                       <Sparkles className="w-4 h-4" />
-                      <span>AI-Powered Client Acquisition</span>
+                      <span>AI-Powered Client Prospecting</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight">
                       Find Nonprofits with <br/>
                       <span className="text-indigo-600">Untapped Video Potential</span>
                     </h1>
                     <p className="text-lg text-slate-600 mb-8 max-w-lg mx-auto">
-                      Analyze video strategy metrics, identify gaps, and generate the perfect pitch in seconds.
+                      Audit nonprofits, public institutions, and mission-driven orgs to identify weak video strategies and generate the perfect pitch.
                     </p>
                   </>
                 )}
@@ -83,7 +83,7 @@ const App = () => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Enter organization name (e.g. 'World Wildlife Fund')"
+                  placeholder="Enter nonprofit name (e.g. 'Local Food Bank')"
                   className="w-full pl-11 pr-4 py-4 bg-white border border-slate-200 rounded-xl shadow-lg shadow-slate-200/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-base disabled:opacity-70 disabled:cursor-not-allowed"
                   disabled={status === AnalysisState.LOADING}
                 />
@@ -123,17 +123,17 @@ const App = () => {
                  <div className="inline-block relative">
                     <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
                  </div>
-                 <h3 className="mt-6 text-xl font-bold text-slate-800">Analyzing {searchTerm}...</h3>
-                 <p className="text-slate-500 mt-2">Gathering metrics from social channels and YouTube.</p>
+                 <h3 className="mt-6 text-xl font-bold text-slate-800">Auditing {searchTerm}...</h3>
+                 <p className="text-slate-500 mt-2">Scanning social channels for strategy gaps and opportunities.</p>
                  
                  <div className="mt-8 max-w-sm mx-auto space-y-3">
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden w-full">
                        <div className="h-full bg-indigo-500 w-1/3 animate-pulse"></div>
                     </div>
                     <div className="flex justify-between text-xs text-slate-400">
-                       <span>Searching</span>
-                       <span>Analysing</span>
-                       <span>Strategizing</span>
+                       <span>Discovery</span>
+                       <span>Analysis</span>
+                       <span>Strategy</span>
                     </div>
                  </div>
               </div>

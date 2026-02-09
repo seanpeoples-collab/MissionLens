@@ -8,13 +8,13 @@ export const analyzeOrganization = async (orgName: string): Promise<AnalysisResu
   const model = "gemini-3-flash-preview";
 
   const prompt = `
-    You are an expert Video Strategy Consultant for nonprofits. 
-    Analyze the *publicly accessible* video presence of: "${orgName}" using Google Search.
+    You are an expert Video Strategy Consultant specializing in business development for agencies.
+    Your goal is to audit the *publicly accessible* video presence of: "${orgName}" (a nonprofit, public institution, or mission-driven organization) using Google Search.
 
-    **Goal**: Quickly audit their video strategy to find a "pitchable gap".
-
-    **Phase 1: Public Channel Audit**
-    Find the official profiles for these 5 platforms. 
+    **Primary Objective**: Identify if this organization has a **WEAK** video presence that represents a sales opportunity.
+    
+    **Phase 1: Platform Audit**
+    Find the official profiles for these 5 platforms:
     1. **YouTube**
     2. **LinkedIn**
     3. **Instagram**
@@ -25,23 +25,24 @@ export const analyzeOrganization = async (orgName: string): Promise<AnalysisResu
     - **URL**: The profile link.
     - **Status**: "Strong", "Average", "Weak", "Missing".
     - **Strategy**: 1 sentence summary.
-    - **Audit Snippet**: A ruthless, 5-7 word verdict (e.g. "Great visuals but bad audio").
+    - **Audit Snippet**: A ruthless, 5-7 word verdict (e.g. "Great visuals but bad audio", "Inconsistent posting schedule").
     - **Last Activity**: e.g. "2 days ago".
 
     **Phase 2: Key Metrics**
     - Estimate **Subscribers** and **Engagement** from search results.
     - **RULE**: 'value' field must be a CLEAN string (e.g. "15k", "2.5%"). No extra text.
 
-    **Phase 3: The Pitch**
+    **Phase 3: The Pitch (Focus on Gaps)**
     Create a cold email framework targeting their biggest video weakness.
+    - If they are "Weak", the pitch should be about *establishing* a presence.
+    - If they are "Average", the pitch should be about *optimizing* for impact/donations.
 
     **Output Rules:**
     - JSON format only.
     - "estimatedImpactScore": Rate their CURRENT video maturity 0-100.
-      - **0-20**: Non-existent or dormant.
-      - **21-50**: Sporadic, amateur, or inconsistent.
-      - **51-80**: Solid, professional, active.
-      - **81-100**: World-class, viral, highly produced (e.g. TED, Red Bull, WWF).
+      - **0-30**: (HIGH OPPORTUNITY) Dormant, amateur, or missing. 
+      - **31-60**: (MODERATE OPPORTUNITY) Inconsistent, low engagement.
+      - **61-100**: (LOW OPPORTUNITY) World-class, viral (e.g. TED, Red Bull).
   `;
 
   const response = await ai.models.generateContent({
@@ -54,7 +55,7 @@ export const analyzeOrganization = async (orgName: string): Promise<AnalysisResu
         type: Type.OBJECT,
         properties: {
           organizationName: { type: Type.STRING },
-          summary: { type: Type.STRING, description: "Executive summary of their video maturity." },
+          summary: { type: Type.STRING, description: "Executive summary focusing on their video maturity gaps." },
           metrics: {
             type: Type.ARRAY,
             items: {
