@@ -15,7 +15,7 @@ MissionLens is an AI-powered tool designed to help agencies and consultants find
 *   **AI**: Google Gemini API (`gemini-3-flash-preview`)
 *   **Build Tool**: Vite
 
-## Setup & Installation
+## local Development
 
 1.  Clone the repository:
     ```bash
@@ -40,10 +40,16 @@ MissionLens is an AI-powered tool designed to help agencies and consultants find
     npm run dev
     ```
 
-## Deployment
+## Netlify Deployment Instructions
 
-This project is optimized for deployment on **Vercel** or **Netlify**.
-
-1.  Import this repository into Vercel/Netlify.
-2.  Add your `API_KEY` in the **Environment Variables** settings during deployment.
-3.  Deploy!
+1.  **Push to GitHub**: Ensure this code is in your GitHub repository.
+2.  **Log in to Netlify** and click "Add new site" -> "Import from existing project".
+3.  **Select GitHub** and choose your `mission-lens` repository.
+4.  **Configure Build**:
+    *   **Build Command**: `npm run build`
+    *   **Publish Directory**: `dist`
+5.  **Add Environment Variable** (Critical):
+    *   Go to "Site settings" > "Environment variables".
+    *   Add a variable named `API_KEY`.
+    *   Paste your Google Gemini API key as the value.
+6.  **Deploy**: Click "Trigger deploy".
