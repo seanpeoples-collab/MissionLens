@@ -26,7 +26,7 @@ const ai = new GoogleGenAI({ apiKey: apiKey || "DUMMY_KEY_FOR_BUILD" });
 
 export const analyzeOrganization = async (orgName: string): Promise<AnalysisResult> => {
   if (isMissingKey) {
-    throw new Error("Configuration Error: API Key is missing. Please go to Netlify > Deploys > 'Clear cache and deploy site' to ensure the environment variable is applied.");
+    throw new Error("Configuration Error: API Key is missing. Please go to Netlify > Deploys > 'Trigger deploy' > 'Deploy project without cache' to ensure the environment variable is applied.");
   }
 
   const model = "gemini-3-flash-preview";
@@ -79,8 +79,8 @@ export const analyzeOrganization = async (orgName: string): Promise<AnalysisResu
       model: model,
       contents: prompt,
       config: {
-        tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json"
+        tools: [{ googleSearch: {} }]
+        // removed responseMimeType to prevent conflict with search tool
       }
     });
 
