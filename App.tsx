@@ -23,8 +23,10 @@ const App = () => {
       setResult(data);
       setStatus(AnalysisState.SUCCESS);
     } catch (err: any) {
-      console.error(err);
-      setError("Unable to complete analysis. Please try again later or check your connection.");
+      console.error("App Error Boundary:", err);
+      // Use the specific error message from the service, or a fallback
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setError(errorMessage || "An unexpected error occurred. Please check the console.");
       setStatus(AnalysisState.ERROR);
     }
   };
@@ -107,13 +109,27 @@ const App = () => {
         {/* Content Area */}
         <div className="w-full">
            {status === AnalysisState.ERROR && (
-             <div className="max-w-2xl mx-auto bg-red-50 border border-red-100 rounded-xl p-6 text-center">
-                <p className="text-red-600 font-medium">{error}</p>
+             <div className="max-w-3xl mx-auto bg-red-50 border border-red-100 rounded-xl p-6 text-center shadow-sm">
+                <p className="text-red-600 font-bold text-lg mb-2">Analysis Failed</p>
+                <p className="text-slate-700 mb-4">{error}</p>
+                
+                {error?.includes("Configuration Error") && (
+                  <div className="bg-white p-4 rounded-lg border border-slate-200 text-left text-sm text-slate-600 mb-4">
+                    <p className="font-semibold mb-1">How to fix Netlify API Key issues:</p>
+                    <ol className="list-decimal pl-5 space-y-1">
+                      <li>Go to Netlify Dashboard &gt; Site Settings &gt; Environment Variables.</li>
+                      <li>Ensure <code>API_KEY</code> is set correctly.</li>
+                      <li><strong>Crucial:</strong> Go to Deploys tab.</li>
+                      <li>Click "Trigger Deploy" and select <strong>"Clear cache and deploy site"</strong>.</li>
+                    </ol>
+                  </div>
+                )}
+
                 <button 
                   onClick={() => setStatus(AnalysisState.IDLE)}
-                  className="mt-4 text-sm text-red-700 underline hover:text-red-800"
+                  className="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg font-medium transition-colors"
                 >
-                  Try again
+                  Try Again
                 </button>
              </div>
            )}
