@@ -24,6 +24,8 @@ if (isMissingKey) {
 
 const ai = new GoogleGenAI({ apiKey: apiKey || "DUMMY_KEY_FOR_BUILD" });
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const analyzeOrganization = async (orgName: string): Promise<AnalysisResult> => {
   if (isMissingKey) {
     throw new Error("Configuration Error: API Key is missing. Please go to Netlify > Deploys > 'Trigger deploy' > 'Deploy project without cache' to ensure the environment variable is applied.");
@@ -74,15 +76,36 @@ export const analyzeOrganization = async (orgName: string): Promise<AnalysisResu
     4. Focus strategy on "Video Presence" gaps.
   `;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: prompt,
-      config: {
-        tools: [{ googleSearch: {} }]
-        // removed responseMimeType to prevent conflict with search tool
+  // Retry logic wrapper
+  const generateWithRetry = async (retries = 3, initialDelay = 2000) => {
+    for (let i = 0; i <= retries; i++) {
+      try {
+        console.log(`Attempt ${i + 1} for ${orgName}...`);
+        const response = await ai.models.generateContent({
+          model: model,
+          contents: prompt,
+          config: {
+            tools: [{ googleSearch: {} }]
+          }
+        });
+        return response;
+      } catch (err: any) {
+        const msg = err.toString();
+        // Check for rate limit (429) or service unavailable (503)
+        if ((msg.includes("429") || msg.includes("503")) && i < retries) {
+          const waitTime = initialDelay * Math.pow(2, i); // Exponential backoff: 2s, 4s, 8s
+          console.warn(`Attempt ${i + 1} failed (Rate Limit). Retrying in ${waitTime}ms...`);
+          await delay(waitTime);
+          continue;
+        }
+        throw err;
       }
-    });
+    }
+    throw new Error("Rate limit exceeded. The AI is currently busy. Please try again in a few minutes.");
+  };
+
+  try {
+    const response = await generateWithRetry();
 
     const text = response.text;
     if (!text) {
@@ -134,16 +157,14 @@ export const analyzeOrganization = async (orgName: string): Promise<AnalysisResu
       estimatedImpactScore: typeof data.estimatedImpactScore === 'number' ? data.estimatedImpactScore : 0
     };
   } catch (error: any) {
-    // Enhance error message for the UI
     console.error("Analysis Failed:", error);
     
-    // Check for specific Google API errors
     const msg = error.toString();
     if (msg.includes("400") || msg.includes("API key")) {
       throw new Error("Invalid API Key. Please check your Netlify environment variables.");
     }
     if (msg.includes("429")) {
-      throw new Error("You are being rate limited by Google. Please wait a minute and try again.");
+      throw new Error("You are being rate limited by Google. Please wait 60 seconds and try again.");
     }
     
     throw error;
